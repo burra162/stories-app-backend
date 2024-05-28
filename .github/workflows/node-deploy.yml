@@ -11,10 +11,10 @@ jobs:
   aws-deploy:
     runs-on: ubuntu-latest
     env:
-      DB_HOST: ${{ secrets.AWS_DB_HOST }}
-      DB_PW: ${{ secrets.AWS_DB_PW}}
-      DB_USER: ${{ secrets.AWS_DB_USER }}
-      DB_NAME: ${{ secrets.AWS_DB_NAME }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PW: ${{ secrets.DB_PW}}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_NAME: ${{ secrets.DB_NAME }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
@@ -40,21 +40,21 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete"
           SOURCE: "deploy/"
-          REMOTE_HOST: "recipe.eaglesoftwareteam.com"
+          REMOTE_HOST: "ec2-50-17-26-173.compute-1.amazonaws.com"
           REMOTE_USER: ubuntu
-          TARGET: "nodeapps/recipe-backend"
+          TARGET: "nodeapps/story-backend"
       - name: Execute SSH commmands on remote server
         uses: JimCronqvist/action-ssh@master
         env:
           NAME: "Root"
         with:
-          hosts: "ubuntu@tutorial.eaglesoftwareteam.com"
+          hosts: "ubuntu@ec2-50-17-26-173.compute-1.amazonaws.com"
           privateKey: ${{ secrets.SERVER_SSH_KEY }}
           debug: false
           command: |
-            cd nodeapps/recipe-backend
+            cd nodeapps/story-backend
             npm install
-            sudo systemctl stop recipe-backend
-            sudo cp recipe-backend.service /lib/systemd/system/recipe-backend.service
+            sudo systemctl stop story-backend
+            sudo cp story-backend.service /lib/systemd/system/story-backend.service
             sudo systemctl daemon-reload
-            sudo systemctl start recipe-backend
+            sudo systemctl start story-backend
