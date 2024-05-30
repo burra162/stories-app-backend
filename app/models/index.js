@@ -18,6 +18,7 @@ db.sequelize = sequelize;
 db.session = require("./session.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.genre = require("./genre.model.js")(sequelize, Sequelize);
+db.story = require("./story.model.js")(sequelize, Sequelize);
 
 // foreign key for session
 db.user.hasMany(
@@ -31,5 +32,21 @@ db.session.belongsTo(
   { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
 );
 
+
+
+
+// foreign key for story and user
+
+db.user.hasMany(
+  db.story,
+  { as: "story" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+
+db.story.belongsTo(
+  db.user,
+  { as: "user" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
 
 module.exports = db;
