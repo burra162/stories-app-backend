@@ -10,19 +10,31 @@ exports.create = async (req, res) => {
   if (req.body.firstName === undefined) {
     const error = new Error("First name cannot be empty for user!");
     error.statusCode = 400;
-    throw error;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while creating user.",
+    });
   } else if (req.body.lastName === undefined) {
     const error = new Error("Last name cannot be empty for user!");
     error.statusCode = 400;
-    throw error;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while creating user.",
+    });
   } else if (req.body.email === undefined) {
     const error = new Error("Email cannot be empty for user!");
     error.statusCode = 400;
-    throw error;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while creating user.",
+    });
   } else if (req.body.password === undefined) {
     const error = new Error("Password cannot be empty for user!");
     error.statusCode = 400;
-    throw error;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while creating user.",
+    });
   }
 
   // find by email
@@ -32,8 +44,11 @@ exports.create = async (req, res) => {
     },
   })
     .then(async (data) => {
+
       if (data) {
-        return "This email is already in use.";
+        res.status(400).send({
+          message:"Email already in use. Please use a different email.",
+        });
       } else {
         console.log("email not found");
 
@@ -47,7 +62,7 @@ exports.create = async (req, res) => {
           lastName: req.body.lastName,
           email: req.body.email,
           password: hash,
-          salt: salt,
+          salt: salt
         };
 
         // Save User in the database
@@ -72,6 +87,7 @@ exports.create = async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 id: user.id,
+                type: user.type,
                 token: token,
               };
               res.send(userInfo);
