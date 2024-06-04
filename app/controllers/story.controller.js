@@ -225,7 +225,7 @@ exports.addChat = async (req, res) => {
         const history = await Chat.findAll({ where: { storyId: id } });
 
 
-        const chohereResponse = await axios.post('https://api.cohere.com/v1/chat', {
+        const cohereResponse = await axios.post('https://api.cohere.com/v1/chat', {
             model: "command-r-plus",
             message: req.body.message,
             temperature: 0.3,
@@ -240,14 +240,13 @@ exports.addChat = async (req, res) => {
         });
 
         const userMessage = await Chat.create(chat);
-        const chatMessage = await Chat.create({ role: "Chatbot", message: chohereResponse.data.text, storyId: id });
+        const chatMessage = await Chat.create({ role: "Chatbot", message: cohereResponse.data.text, storyId: id });
         history.push(userMessage)
         history.push(chatMessage)
         res.send(history);
     } catch (err) {
-        console.log(err);
         res.status(500).send({
-            message: "Error adding chat to Story with id=" + id,
+            message: "Error adding chat to Story with id=" + id + err,
         });
     }
 }
