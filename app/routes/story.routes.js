@@ -37,5 +37,14 @@ module.exports = (app) => {
 
   router.get("/user/:userId", Story.findAllByUser);
 
+
+  // Add a chat to a story
+
+  router.post("/:id/chat", Story.addChat);
+
+  // Retrieve all chats of a story
+
+  router.get("/:id/chat", Story.findAllChats);
+
   app.use("/storyapi/stories", router);
 };
