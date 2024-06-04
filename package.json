@@ -16,6 +16,7 @@
   "author": "cs",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "cohere-ai": "^7.10.1",
     "cors": "^2.8.5",
