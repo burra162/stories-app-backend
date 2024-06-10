@@ -15,6 +15,7 @@ exports.create = async (req, res) => {
   // Create a Genre
   const genre = {
     name: req.body.name,
+    image: req.body.image,
   };
 
   // Save Genre in the database
