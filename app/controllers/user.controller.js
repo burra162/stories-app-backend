@@ -1,8 +1,11 @@
 const db = require("../models");
 const User = db.user;
 const Session = db.session;
+const Genre = db.genre;
 const Op = db.Sequelize.Op;
 const { encrypt, getSalt, hashPassword } = require("../authentication/crypto");
+
+
 
 // Create and Save a new User
 exports.create = async (req, res) => {
@@ -324,4 +327,66 @@ exports.resetPassword = async (req, res) => {
       });
     });
 
+}
+
+// Update genres for user
+exports.updateGenres = async (req, res) => {
+
+  if (req.body === undefined) {
+    const error = new Error("Genres cannot be empty for user!");
+    error.statusCode = 400;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while updating genres for user.",
+    });
+  }
+
+  const userId = req.params.id;
+  const genreIds = req.body;
+
+  const genres = await Genre.findAll({
+    where: {
+      id: genreIds,
+    },
+  });
+
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    res.status(404).send({
+      message: `Cannot find User with id = ${userId}.`,
+    });
+  }
+
+  // remove all genres for user
+  await user.setGenres([]);
+  // add genres for user
+  await user.addGenres(genres)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while updating genres for user.",
+      });
+    });
+}
+
+
+// Retrieve genres for user
+
+exports.getUserGenres = async (req, res) => {
+  const userId = req.params.id;
+
+  const user = await User.findByPk(userId, {
+    include: {model: Genre, as: "genres"},
+  });
+
+  if (!user) {
+    res.status(404).send({
+      message: `Cannot find User with id = ${userId}.`,
+    });
+  }
+
+  res.send(user.genres);
 }

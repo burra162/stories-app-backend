@@ -64,4 +64,20 @@ db.chat.belongsTo(
   { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
 );
 
+// foreign key for user and genres
+
+db.user.belongsToMany(db.genre, {
+  through: "user_genres",
+  as: "genres",
+  foreignKey: "userId",
+});
+
+db.genre.belongsToMany(db.user, {
+  through: "user_genres",
+  as: "users",
+  foreignKey: "genreId",
+});
+
+
+
 module.exports = db;
