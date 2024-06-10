@@ -26,6 +26,10 @@ module.exports = (app) => {
   // Delete all User
   router.delete("/users/", [authenticateRoute], User.deleteAll);
 
+  // Reset password
+  router.post("/users/reset-password", User.resetPassword);
+  
+
   
   app.use("/storyapi", router);
 };

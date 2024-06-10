@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
 
       if (data) {
         res.status(400).send({
-          message:"Email already in use. Please use a different email.",
+          message: "Email already in use. Please use a different email.",
         });
       } else {
         console.log("email not found");
@@ -244,3 +244,84 @@ exports.deleteAll = (req, res) => {
       });
     });
 };
+
+
+// Reset password
+
+exports.resetPassword = async (req, res) => {
+
+  
+  if (req.body.otp === undefined) {
+    const error = new Error("OTP cannot be empty for !");
+    error.statusCode = 400;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while resetting password.",
+    });
+  }
+  // check if otp = 1234 for now as we are not sending otp
+  if (req.body.otp !== "1234") {
+    res.status(400).send({
+      message: "Invalid OTP",
+    });
+  }
+
+  // validate email
+  if (req.body.email === undefined) {
+    const error = new Error("Email cannot be empty for user!");
+    error.statusCode = 400;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while resetting password.",
+    });
+  }
+
+  // Validate request
+  if (req.body.newPassword === undefined) {
+    const error = new Error("New password cannot be empty for user!");
+    error.statusCode = 400;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while resetting password.",
+    });
+  }
+
+  if (req.body.confirmPassword === undefined) {
+    const error = new Error("Confirm password cannot be empty for user!");
+    error.statusCode = 400;
+    res.status(400).send({
+      message:
+        error.message || "Some error occurred while resetting password.",
+    });
+  }
+
+
+  let salt = await getSalt();
+  let hash = await hashPassword(req.body.confirmPassword, salt);
+
+  const user = {
+    password: hash,
+    salt: salt,
+  };
+
+  User.update(user, {
+    where: { email: req.body.email },
+  })
+    .then((number) => {
+      if (number == 1) {
+        res.send({
+          message: "User's password was updated successfully.",
+        });
+      } else {
+        res.send({
+          message: `Cannot update User's password with id = ${id}. Maybe User was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error updating User's password with id =" + id,
+      });
+    });
+
+}
