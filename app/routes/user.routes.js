@@ -29,7 +29,11 @@ module.exports = (app) => {
   // Reset password
   router.post("/users/reset-password", User.resetPassword);
   
+  // Update genres for user
+  router.put("/users/:id/genres", [authenticateRoute], User.updateGenres);
 
+  // Retrieve genres for user
+  router.get("/users/:id/genres", [authenticateRoute], User.getUserGenres);
   
   app.use("/storyapi", router);
 };
