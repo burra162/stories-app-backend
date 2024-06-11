@@ -34,6 +34,7 @@ module.exports = (app) => {
 
   // Retrieve genres for user
   router.get("/users/:id/genres", [authenticateRoute], User.getUserGenres);
-  
+
+
   app.use("/storyapi", router);
 };

@@ -45,11 +45,24 @@ module.exports = (app) => {
   // Retrieve all chats of a story
 
   router.get("/:id/chat", Story.findAllChats);
-  
+
 
   // Retrieve all suggested stories for a user
 
   router.get("/suggested/:userId", Story.findAllSuggested);
+
+  // Retrieve all favorite stories for a user
+  router.get("/favorite/:userId", Story.findAllFavorites);
+
+  // Check if a story is favorite for a user
+  router.get("/isFavorite/:storyId/:userId", [authenticateRoute], Story.isFavorite);
+
+  // add story to favorite for a user
+  router.post("/addFavorite/:storyId/:userId", [authenticateRoute], Story.addFavorite);
+
+  // remove story from favorite for a user
+  router.delete("/removeFavorite/:storyId/:userId", [authenticateRoute], Story.removeFavorite);
+
 
   app.use("/storyapi/stories", router);
 };
