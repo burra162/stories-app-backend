@@ -20,6 +20,7 @@ db.user = require("./user.model.js")(sequelize, Sequelize);
 db.genre = require("./genre.model.js")(sequelize, Sequelize);
 db.story = require("./story.model.js")(sequelize, Sequelize);
 db.chat = require("./chat.model.js")(sequelize, Sequelize);
+db.favorite = require("./favorite.model.js")(sequelize, Sequelize);
 
 // foreign key for session
 db.user.hasMany(
@@ -78,6 +79,20 @@ db.genre.belongsToMany(db.user, {
   foreignKey: "genreId",
 });
 
+
+// foreign key for user and favorite
+
+db.user.belongsToMany(db.story, {
+  through: "favorite_stories",
+  as: "favorite",
+  foreignKey: "userId",
+});
+
+db.story.belongsToMany(db.user, {
+  through: "favorite_stories",
+  as: "users",
+  foreignKey: "storyId",
+});
 
 
 module.exports = db;

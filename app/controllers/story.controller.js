@@ -1,6 +1,6 @@
 const db = require("../models");
 const Story = db.story;
-
+const User = db.user;
 const Chat = db.chat;
 const axios = require('axios');
 
@@ -172,7 +172,7 @@ exports.findAllByGenre = async (req, res) => {
     const genre = req.params.genre;
 
     try {
-        const data = await Story.findAll({ where: { genre: genre , published :true} });
+        const data = await Story.findAll({ where: { genre: genre, published: true } });
         res.send(data);
     } catch (err) {
         res.status(500).send({
@@ -190,7 +190,7 @@ exports.findAllByUser = async (req, res) => {
     const userId = req.params.userId;
 
     try {
-        const data = await Story.findAll({ where: { userId: userId} });
+        const data = await Story.findAll({ where: { userId: userId } });
         res.send(data);
     } catch (err) {
         res.status(500).send({
@@ -305,4 +305,82 @@ exports.findAllSuggested = async (req, res) => {
     }
     // 
     res.send(suggestedStories);
+}
+
+// get all favorite stories of a user
+
+exports.findAllFavorites = async (req, res) => {
+
+    const userId = req.params.userId;
+
+    try {
+        const user = await User.findByPk(userId, { include: "favorite" });
+        res.send(user.favorite);
+    } catch (err) {
+        res.status(500).send({
+            message: "Error retrieving favorite stories!",
+        });
+    }
+}
+
+// add a story to favorites
+
+exports.addFavorite = async (req, res) => {
+
+    const userId = req.params.userId;
+    const storyId = req.params.storyId;
+
+    try {
+        const user = await User.findByPk(userId);
+        const story = await Story.findByPk(storyId);
+
+        await user.addFavorite(story);
+        res.send({ message: "Story added to favorites!" });
+    } catch (err) {
+        res.status(500).send({
+            message: "Error adding story to favorites!",
+        });
+    }
+}
+
+
+// remove a story from favorites
+
+exports.removeFavorite = async (req, res) => {
+
+    const userId = req.params.userId;
+    const storyId = req.params.storyId;
+
+    try {
+        const user = await User.findByPk(userId);
+        const story = await Story.findByPk(storyId);
+
+        await user.removeFavorite(story);
+        res.send({ message: "Story removed from favorites!" });
+    }
+    catch (err) {
+        res.status(500).send({
+            message: "Error removing story from favorites!",
+        });
+    }
+}
+
+// check if a story is favorite for a user
+
+exports.isFavorite = async (req, res) => {
+
+    const userId = req.params.userId;
+    const storyId = req.params.storyId;
+
+    try {
+        const user = await User.findByPk(userId);
+        const story = await Story.findByPk(storyId);
+
+        const isFavorite = await user.hasFavorite(story);
+        res.send({ isFavorite: isFavorite });
+    } catch (err) {
+        res.status(500).send({
+            message: "Error checking if story is favorite!",
+        });
+    }
 }
