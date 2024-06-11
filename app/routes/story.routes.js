@@ -45,6 +45,11 @@ module.exports = (app) => {
   // Retrieve all chats of a story
 
   router.get("/:id/chat", Story.findAllChats);
+  
+
+  // Retrieve all suggested stories for a user
+
+  router.get("/suggested/:userId", Story.findAllSuggested);
 
   app.use("/storyapi/stories", router);
 };

@@ -172,7 +172,7 @@ exports.findAllByGenre = async (req, res) => {
     const genre = req.params.genre;
 
     try {
-        const data = await Story.findAll({ where: { genre: genre } });
+        const data = await Story.findAll({ where: { genre: genre , published :true} });
         res.send(data);
     } catch (err) {
         res.status(500).send({
@@ -190,7 +190,7 @@ exports.findAllByUser = async (req, res) => {
     const userId = req.params.userId;
 
     try {
-        const data = await Story.findAll({ where: { userId: userId } });
+        const data = await Story.findAll({ where: { userId: userId} });
         res.send(data);
     } catch (err) {
         res.status(500).send({
@@ -231,7 +231,7 @@ exports.addChat = async (req, res) => {
             temperature: 0.3,
             chat_history: history,
             stream: false,
-            connectors: [{"id":"web-search"}]
+            connectors: [{ "id": "web-search" }]
         }, {
             headers: {
                 'Authorization': `Bearer ${process.env.COHERE_API_KEY}`,
@@ -268,3 +268,41 @@ exports.findAllChats = async (req, res) => {
     }
 }
 
+
+
+// Find all suggested stories for a user
+exports.findAllSuggested = async (req, res) => {
+
+    // get user id from request
+    const userId = req.params.userId;
+
+    const user = await db.user.findByPk(userId);
+
+    // get user genres
+    const genres = user.genres;
+
+    // get all stories
+    const stories = await Story.findAll();
+
+    // filter stories by genre and publish status
+
+    const suggestedStories = stories.filter((story) => {
+        return genres.includes(story.genre) && story.published;
+    }
+    );
+
+    if (suggestedStories.length === 0) {
+        Story.findAll().then((data) => {
+            res.send(data);
+        }
+        ).catch((err) => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving stories.",
+            });
+        });
+
+    }
+    // 
+    res.send(suggestedStories);
+}
