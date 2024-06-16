@@ -21,6 +21,7 @@ db.genre = require("./genre.model.js")(sequelize, Sequelize);
 db.story = require("./story.model.js")(sequelize, Sequelize);
 db.chat = require("./chat.model.js")(sequelize, Sequelize);
 db.favorite = require("./favorite.model.js")(sequelize, Sequelize);
+db.review = require("./review.model.js")(sequelize, Sequelize);
 
 // foreign key for session
 db.user.hasMany(
@@ -93,6 +94,38 @@ db.story.belongsToMany(db.user, {
   as: "users",
   foreignKey: "storyId",
 });
+
+
+// foreign key for story and review
+
+db.story.hasMany(
+  db.review,
+  { as: "review" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+
+db.review.belongsTo(
+  db.story,
+  { as: "story" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+
+// foreign key for user and review
+
+db.user.hasMany(
+  db.review,
+  { as: "review" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+
+db.review.belongsTo(
+  db.user,
+  { as: "user" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+
+
+
 
 
 module.exports = db;
