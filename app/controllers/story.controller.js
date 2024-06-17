@@ -2,6 +2,7 @@ const db = require("../models");
 const Story = db.story;
 const User = db.user;
 const Chat = db.chat;
+const Review = db.review;
 const axios = require('axios');
 
 // Create and Save a new Story
@@ -384,3 +385,23 @@ exports.isFavorite = async (req, res) => {
         });
     }
 }
+
+
+// Find all Reviews for a story
+
+exports.findAllReviews = async (req, res) => {
+    
+    const storyId = req.params.storyId;
+    console.log(storyId);
+
+    try {
+        const data = await Review.findAll({ where: { storyId: storyId }, include: [{ model: User, as: "user", attributes: ["id", "firstname", "lastname"]}] });
+        res.send(data);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: "Error retrieving Review with storyId=" + storyId,
+        });
+    }
+}
+

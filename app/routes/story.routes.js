@@ -63,6 +63,9 @@ module.exports = (app) => {
   // remove story from favorite for a user
   router.delete("/removeFavorite/:storyId/:userId", [authenticateRoute], Story.removeFavorite);
 
+  // Get all reviews for a story
+  router.get("/:storyId/reviews", Story.findAllReviews);
+
 
   app.use("/storyapi/stories", router);
 };
