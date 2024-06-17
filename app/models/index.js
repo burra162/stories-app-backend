@@ -21,6 +21,7 @@ db.genre = require("./genre.model.js")(sequelize, Sequelize);
 db.story = require("./story.model.js")(sequelize, Sequelize);
 db.chat = require("./chat.model.js")(sequelize, Sequelize);
 db.favorite = require("./favorite.model.js")(sequelize, Sequelize);
+db.readinglist = require("./readinglist.model.js")(sequelize, Sequelize);
 db.review = require("./review.model.js")(sequelize, Sequelize);
 
 // foreign key for session
@@ -92,6 +93,20 @@ db.user.belongsToMany(db.story, {
 db.story.belongsToMany(db.user, {
   through: "favorite_stories",
   as: "users",
+  foreignKey: "storyId",
+});
+
+// foreign key for user and readinglist
+
+db.user.belongsToMany(db.story, {
+  through: "reading_list",
+  as: "readinglist",
+  foreignKey: "userId",
+});
+
+db.story.belongsToMany(db.user, {
+  through: "reading_list",
+  as: "reading_users",
   foreignKey: "storyId",
 });
 
