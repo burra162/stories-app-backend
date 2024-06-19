@@ -63,6 +63,18 @@ module.exports = (app) => {
   // remove story from favorite for a user
   router.delete("/removeFavorite/:storyId/:userId", [authenticateRoute], Story.removeFavorite);
 
+  // Retrieve all reading list stories for a user
+  router.get("/readingList/:userId", Story.findAllReadingList);
+
+  // Check if a story is in reading list for a user
+  router.get("/isReadingList/:storyId/:userId", [authenticateRoute], Story.isInReadingList);
+
+  // add story to reading list for a user
+  router.post("/addReadingList/:storyId/:userId", [authenticateRoute], Story.addToReadingList);
+
+  // remove story from reading list for a user
+  router.delete("/removeReadingList/:storyId/:userId", [authenticateRoute], Story.removeFromReadingList);
+
   // Get all reviews for a story
   router.get("/:storyId/reviews", Story.findAllReviews);
 

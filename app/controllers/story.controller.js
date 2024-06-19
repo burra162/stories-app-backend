@@ -386,6 +386,87 @@ exports.isFavorite = async (req, res) => {
     }
 }
 
+// find all stories in reading list of a user   
+
+exports.findAllReadingList = async (req, res) => {
+    
+        const userId = req.params.userId;
+    
+        try {
+            const user = await User.findByPk(userId, { include: "readinglist" });
+            res.send(user.readinglist);
+        } catch (err) {
+            res.status(500).send({
+                message: "Error retrieving reading list!",
+            });
+        }
+    }
+
+
+// add a story to reading list
+
+exports.addToReadingList = async (req, res) => {
+    
+        const userId = req.params.userId;
+        const storyId = req.params.storyId;
+    
+        try {
+            const user = await User.findByPk(userId);
+            const story = await Story.findByPk(storyId);
+    
+            await user.addReadinglist(story);
+            res.send({ message: "Story added to reading list!" });
+        } catch (err) {
+            res.status(500).send({
+                message: "Error adding story to reading list!",
+            });
+        }
+    }
+
+
+// remove a story from reading list
+
+exports.removeFromReadingList = async (req, res) => {
+
+    const userId = req.params.userId;
+    const storyId = req.params.storyId;
+
+    try {
+        const user = await User.findByPk(userId);
+        const story = await Story.findByPk(storyId);
+
+        await user.removeReadinglist(story);
+        res.send({ message: "Story removed from reading list!" });
+    }
+    catch (err) {
+        res.status(500).send({
+            message: "Error removing story from reading list!",
+        });
+    }
+}
+
+// check if a story is in reading list for a user
+
+exports.isInReadingList = async (req, res) => {
+
+    const userId = req.params.userId;
+    const storyId = req.params.storyId;
+
+    try {
+        const user = await User.findByPk(userId);
+        const story = await Story.findByPk(storyId);
+
+        const isInReadingList = await user.hasReadinglist(story);
+        res.send({ isInReadingList: isInReadingList });
+    }
+    catch (err) {
+        res.status(500).send({
+            message: "Error checking if story is in reading list!",
+        });
+    }
+}
+
+
 
 // Find all Reviews for a story
 
